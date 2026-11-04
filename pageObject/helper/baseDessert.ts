@@ -3,14 +3,20 @@ import { Page, Locator } from '@playwright/test';
 export class BaseDessert{
         protected page: Page;
         
-        basket: Locator;
+        inBasket: Locator;
             
-         addToFavoritBtn: Locator;
+        addToFavoritBtn: Locator;
+
+        openBascet:Locator;
+
+        submit: Locator;
 
         constructor(page:Page){
             this.page=page;
-            this.basket=page.getByRole('link', {name:'В корзину'});
+            this.inBasket=page.getByRole('link', {name:'В корзину'});
             this.addToFavoritBtn=page.locator('a.t1002__addBtn');
+            this.openBascet=page.locator('div.t706__carticon-imgwrap');
+            this.submit=page.getByRole('button', { name: 'Оформить' });
         }      
 
      async selectRandomTeste(slctr: Locator): Promise<void> {
@@ -83,10 +89,18 @@ export class BaseDessert{
      }
 
      async addToChart(): Promise<void>{
-        await this.basket.click();
+        await this.inBasket.click();
      }
 
      async addToFavorites(): Promise<void> {
         await this.addToFavoritBtn.click();
      }
-}
+
+     async openBasket():Promise<void>{
+      await this.openBascet.click();   }
+      
+     async placeAnOrder():Promise<void>{
+      await this.submit.click();
+     }
+
+     }
