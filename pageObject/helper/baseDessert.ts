@@ -3,23 +3,23 @@ import { Page, Locator } from '@playwright/test';
 export class BaseDessert{
         protected page: Page;
         
-        inBasket: Locator;
+        inBasketBtn: Locator;
             
-        addToFavoritBtn: Locator;
+        favorites: Locator;
 
-        openBascet:Locator;
+        order:Locator;
 
         submit: Locator;
 
         constructor(page:Page){
             this.page=page;
-            this.inBasket=page.getByRole('link', {name:'В корзину'});
-            this.addToFavoritBtn=page.locator('a.t1002__addBtn');
-            this.openBascet=page.locator('div.t706__carticon-imgwrap');
+            this.inBasketBtn=page.getByRole('link', {name:'В корзину'});
+            this.favorites=page.locator('a.t1002__addBtn');
+            this.order=page.locator('div.t706__carticon-imgwrap');
             this.submit=page.getByRole('button', { name: 'Оформить' });
         }      
 
-     async selectRandomTeste(slctr: Locator): Promise<void> {
+     async selectRandomOption(slctr: Locator): Promise<void> {
         const count = await slctr.count();
 
         if (count === 0) {throw new Error('Элементы для выбора не найдены');}
@@ -89,17 +89,17 @@ export class BaseDessert{
      }
 
      async addToChart(): Promise<void>{
-        await this.inBasket.click();
+        await this.inBasketBtn.click();
      }
 
      async addToFavorites(): Promise<void> {
-        await this.addToFavoritBtn.click();
+        await this.favorites.click();
      }
 
-     async openBasket():Promise<void>{
-      await this.openBascet.click();   }
+     async openOrder():Promise<void>{
+      await this.order.click();   }
       
-     async placeAnOrder():Promise<void>{
+     async submitOrder():Promise<void>{
       await this.submit.click();
      }
 

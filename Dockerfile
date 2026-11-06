@@ -1,5 +1,13 @@
-FROM  node:22-bookworm-slim
-RUN apt-get update && apt-get install -y sqlite3 caddy
+FROM node:22-bookworm-slim
+
 WORKDIR /app
+
+COPY package*.json ./
+
+RUN npm ci
+
+RUN npx playwright install --with-deps
+
 COPY . .
-ENV DB_NAME=desserts.db
+
+CMD ["npx", "playwright", "test"]

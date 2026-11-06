@@ -2,10 +2,9 @@ import { Page, Locator } from '@playwright/test';
 import { BaseDessert } from '../helper/baseDessert';
 import { QuantityControl } from '../helper/QuantityControl';
 
-export class MacaronPage extends BaseDessert{
-    
+export class BombMakaronPage extends BaseDessert{
+
     tasteCheckbox:Locator;
-    
     quantity: QuantityControl;
    
     constructor(page:Page){
@@ -15,5 +14,8 @@ export class MacaronPage extends BaseDessert{
         this.quantity = new QuantityControl(page);
     }
         
-       
+    async getProductPrice(): Promise<number> {
+    const priceText = await this.page.locator('.js-store-prod-price-val').first().innerText();
+    return Number(priceText.replace(/[^0-9.,]/g, '').replace(',', '.'));
+    }
     }

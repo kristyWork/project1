@@ -17,13 +17,13 @@ export class BentoPage extends BaseDessert{
         this.weightSlctr=page.locator('.js-product-edition-option-variants');
         this.weightOption=this.weightSlctr.getByRole('option', {name:/.порций/});
         
-        this.cendelSlctr=page.locator('.js-product-option-variants');
+        this.cendelSlctr=page.locator('.js-product-option-variants:has(option[value="1 свеча (в подарок)"])');
         this.cendelOption=this.cendelSlctr.getByRole('option', {name: /.свеч./});
 
         this.tasteCheckbox = page.locator('input.t-checkbox[type="checkbox"]');
        
-        this.decorSlctr=page.locator('.js-product-option-name');
-        this.decorOption=page.locator('[data-product-variant-price]')
+        this.decorSlctr=page.locator('.js-product-option-variants:has(option[value="Классический от Цеха"])');
+        this.decorOption=this.decorSlctr.locator('[data-product-variant-price]')
     }
 
 

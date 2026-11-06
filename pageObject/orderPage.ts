@@ -8,18 +8,15 @@ export class OrderPage{
      
      remember:Locator;
      deliveryOptions: Locator;
-     totalPrice:Locator;
      submit:Locator;
 
      constructor(page:Page){
         this.fullName=page.locator('input[name="Name"]');
-        this.email=page.locator('input[name="Email"');
+        this.email=page.locator('input[name="Email"]');
         this.phone=page.locator('input[name="Phone"]');
         this.wishes=page.locator('textarea[name="Textarea"]');
-
-        this.remember=page.locator('input.t-checkbox__control[type="checkbox"]');
+        this.remember = page.locator('label').filter({ hasText: 'Запомнить контакты в браузере' }).locator('input');
         this.deliveryOptions = page.locator( 'input[name="Выберите вариант доставки"]');
-        this.totalPrice=page.locator('div.t706__cartwin-prodamount-price');
         this.submit=page.getByRole('button', { name: 'Оформить' });
      }
 
@@ -27,14 +24,14 @@ export class OrderPage{
 
     const fullName = faker.person.fullName();
     const email = faker.internet.email();
-    const phone = `+375${faker.helpers.arrayElement(['29', '33', '44', '25'])}${faker.string.numeric(7)}`;
+    const phone = `375${faker.helpers.arrayElement(['29', '33', '44', '25'])}${faker.string.numeric(7)}`;
     const wishes = faker.lorem.sentence();
 
     await this.fullName.fill(fullName);
     await this.email.fill(email);
     await this.phone.fill(phone);
     await this.wishes.fill(wishes);
-    await this.remember.click(); 
+    await this.remember.check(); 
     }
 
 
@@ -52,27 +49,8 @@ export class OrderPage{
     return value || '';
     }
 
-   async getOrderPrice(totalPrice: Locator): Promise<number> {
-    const priceText = await totalPrice.innerText();
 
-    const price = Number(priceText);
-
-    if (Number.isNaN(price)) {
-        throw new Error(`Не удалось получить цену: ${priceText}`);
-    }
-
-    return price;
-    }
-
-   async checkDeliveryPrice(initialPrice:number, selectedDelivery:string, totalPrice:Locator): Promise<void> {
-    const actualPrice = await this.getOrderPrice(totalPrice);
-
-    const surcharge = selectedDelivery.includes('Курьер') ? 12 : 0;
-
-    expect(actualPrice).toBe(initialPrice + surcharge);
-    }
-
-    async clickSubmit():Promise<void>{
+    async submitOrder():Promise<void>{
       await this.submit.click();
     }
 

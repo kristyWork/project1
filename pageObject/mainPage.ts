@@ -12,7 +12,8 @@ export class MainPage{
     weddingCake:Locator;
     addToFavoritBtn:Locator;
     favoritesBtn: Locator;
-    basketBtn:Locator;
+    packBtn:Locator;
+    submit:Locator;
 
     constructor(page:Page){
         this.page=page;
@@ -27,7 +28,9 @@ export class MainPage{
         this.addToFavoritBtn=page.locator('a.t1002__addBtn');
         this.favoritesBtn=page.locator('a.t-menuwidgeticons__wishlist');
 
-        this.basketBtn=page.locator()
+        this.packBtn=page.getByRole('button', {name:'Корзина'});
+        this.submit=page.getByRole('button', { name: 'Оформить' });
+        
     }
 
     async chooseDessert(dessert:Locator): Promise<void>{
@@ -39,7 +42,10 @@ export class MainPage{
     async openFavorites():Promise<void>{
         await this.favoritesBtn.click();
     }  
-    async openBasket():Promise<void>{
-        await this.basketBtn.click();
+    async openPack():Promise<void>{
+        await this.packBtn.click();
     }
+    async submitOrder():Promise<void>{
+      await this.submit.click();
+     } 
 }
