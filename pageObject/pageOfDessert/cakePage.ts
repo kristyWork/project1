@@ -1,5 +1,5 @@
 import { Page, Locator } from '@playwright/test';
-import { BaseDessert } from '../helper/baseDessert';
+import { BaseDessert } from '../baseDessert';
 
 export class CakePage extends BaseDessert{
 
@@ -18,10 +18,10 @@ export class CakePage extends BaseDessert{
 
     constructor(page:Page){
         super(page);
-        this.weightSlctr=page.locator('.js-product-edition-option-variants');
-        this.weightOption=this.weightSlctr.getByRole('option', {name:/.порций/});
+        this.weightSlctr=page.locator('.js-product-edition-option-variants:has(option[value="2000"])');
+        this.weightOption=this.weightSlctr.getByRole('option', {name:/.000/});
         
-        this.tasteSlctr = page.locator('select.js-product-edition-option-variants');
+        this.tasteSlctr = page.locator('select.js-product-edition-option-variants:has(option[value="Сникерс"])');
         this.tasteOption = this.tasteSlctr.getByRole('option');
 
         this.cendelSlctr=page.locator('select.js-product-option-variants:has(option[value="1 свеча (в подарок)"])');

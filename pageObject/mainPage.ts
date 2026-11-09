@@ -10,8 +10,8 @@ export class MainPage{
     bombCake:Locator;
     muss:Locator;
     weddingCake:Locator;
-    addToFavoritBtn:Locator;
-    favoritesBtn: Locator;
+    favoritBtn:Locator;
+    wishList: Locator;
     packBtn:Locator;
     submit:Locator;
 
@@ -25,8 +25,8 @@ export class MainPage{
         this.muss=page.getByRole('link', {name: 'Муссовые торты'});
         this.weddingCake=page.getByRole('link', {name: 'Свадебные торты'});
 
-        this.addToFavoritBtn=page.locator('a.t1002__addBtn');
-        this.favoritesBtn=page.locator('a.t-menuwidgeticons__wishlist');
+        this.favoritBtn=page.locator('a.t1002__addBtn');
+        this.wishList = page.locator('.t-menuwidgeticons__wishlist, .t1002__wishlisticon').filter({ visible: true }).first();
 
         this.packBtn=page.getByRole('button', {name:'Корзина'});
         this.submit=page.getByRole('button', { name: 'Оформить' });
@@ -37,10 +37,10 @@ export class MainPage{
         await dessert.click();
     }
      async addToFavorites(): Promise<void> {
-        await this.addToFavoritBtn.click();
+        await this.favoritBtn.click();
     }
-    async openFavorites():Promise<void>{
-        await this.favoritesBtn.click();
+    async openWishList():Promise<void>{
+        await this.wishList.click();
     }  
     async openPack():Promise<void>{
         await this.packBtn.click();

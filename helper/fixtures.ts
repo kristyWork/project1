@@ -1,11 +1,13 @@
 import { test as base, expect } from '@playwright/test';
 import { MainPage } from '../pageObject/mainPage';
 import { OrderPage } from '../pageObject/orderPage';
-
+import { PriceControl } from './priceControl';
+export type OrderMock = {wasIntercepted: () => boolean;};
 type Fixtures = {
-    orderMock: {wasIntercepted: () => boolean;};
+    orderMock: OrderMock;
     mainPage: MainPage;
     orderPage: OrderPage;
+    priceControl: PriceControl;
 };
 
 export const test = base.extend<Fixtures>({
@@ -33,15 +35,19 @@ export const test = base.extend<Fixtures>({
         await use({
             wasIntercepted: () => intercepted
         });
-    }, 
-     mainPage: async ({ page }, use) => {
+        }, 
+      mainPage: async ({ page }, use) => {
       await use(new MainPage(page));
        },
 
 
-  orderPage: async ({ page }, use) => {
-    await use(new OrderPage(page));
-  },
+      orderPage: async ({ page }, use) => {
+      await use(new OrderPage(page));
+      },
+
+      priceControl: async({page}, use)=>{
+        await use(new PriceControl(page));
+      }
 });
 
 export { expect };

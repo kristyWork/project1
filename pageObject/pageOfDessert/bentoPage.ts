@@ -1,5 +1,5 @@
 import { Page, Locator } from '@playwright/test';
-import { BaseDessert } from '../helper/baseDessert';
+import { BaseDessert } from '../baseDessert';
 export class BentoPage extends BaseDessert{
     weightSlctr: Locator;
     weightOption: Locator;
@@ -14,7 +14,7 @@ export class BentoPage extends BaseDessert{
     
     constructor(page:Page){
         super(page);
-        this.weightSlctr=page.locator('.js-product-edition-option-variants');
+        this.weightSlctr=page.locator('.js-product-edition-option-variants:has(option[value="700 грамм (2-4 порции)"])');
         this.weightOption=this.weightSlctr.getByRole('option', {name:/.порций/});
         
         this.cendelSlctr=page.locator('.js-product-option-variants:has(option[value="1 свеча (в подарок)"])');

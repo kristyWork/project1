@@ -1,16 +1,21 @@
-import{ BentoPage } from '../pageObject/pageOfDessert/bentoPage';
-import {  BombMakaronPage } from '../pageObject/pageOfDessert/bombMacaronPage';
+import { BentoPage } from '../pageObject/pageOfDessert/bentoPage';
+import { BombMakaronPage } from '../pageObject/pageOfDessert/bombMacaronPage';
 import { CakePage } from '../pageObject/pageOfDessert/cakePage';
 import { MussePage } from '../pageObject/pageOfDessert/mussePage';
 import { TraiflPage } from '../pageObject/pageOfDessert/traiflPage';
 import { WedCakePage } from '../pageObject/pageOfDessert/wedCakePage';
 import { MainPage } from '../pageObject/mainPage';
 import { OrderPage } from '../pageObject/orderPage';
-import { test, expect } from './fixtures';
-import { orderMaker } from '../pageObject/helper/orderMaker';
+import { test, expect } from '../helper/fixtures';
+import { orderMaker } from '../helper/orderMaker';
+import { PriceControl } from '../helper/priceControl';
+import { CartControl } from '../helper/CartControl';
+import { FavoritesPage } from '../pageObject/FavoritesPage';
+import { monitorNetwork } from '../helper/NetworkDiagnostics';
 
 test.beforeEach(async({page})=> {
-  await page.goto('https://cehgrodno.by/');
+  monitorNetwork(page);
+  await page.goto('',{ waitUntil: 'domcontentloaded'});
   await expect(page).toHaveTitle(/ЦЕХ/);
 })
 
@@ -22,7 +27,7 @@ test('get started link', async ({ page }) => {
   await expect(page).toHaveTitle(/Бенто торт/);
 });
 
-test('bento', async({page, orderMock, mainPage, orderPage})=>{
+test('bento', async({page, orderMock, mainPage, orderPage, priceControl})=>{
   const bentoPage=new BentoPage(page);
 
   await mainPage.chooseDessert(mainPage.bento);
@@ -43,12 +48,12 @@ test('bento', async({page, orderMock, mainPage, orderPage})=>{
 
 });
 
-test('cake', async({page, orderMock, mainPage, orderPage})=>{
+test('cake', async({page, orderMock, mainPage, orderPage, priceControl})=>{
 
   const cakePage=new CakePage(page);
 
   await mainPage.chooseDessert(mainPage.cake);
-  await expect(page).toHaveTitle(/Торты от 2000 грамм/);
+  await expect(page).toHaveTitle(/Торты 2000 грамм на заказ/);
   await cakePage.weightSlctr.click();
   await cakePage.selectRandomOption(cakePage.weightOption);
   await cakePage.tasteSlctr.click();
@@ -58,23 +63,144 @@ test('cake', async({page, orderMock, mainPage, orderPage})=>{
   await cakePage.decorSlctr.click();
   await cakePage.selectRandomOption(cakePage.decorOption);
 
-  await orderMaker (cakePage, orderPage, orderMock, mainPage);
+  await orderMaker (cakePage, orderPage, priceControl, orderMock);
 });
 
-test('quantity control macaron test', async({page, mainPage})=>{
-  const bombMacaronPage =new BombMakaronPage(page);
+
+test('traifl order e2e', async ({page, orderMock,mainPage,orderPage,priceControl}) => {
+  const traiflPage = new TraiflPage(page);
+
+  await mainPage.chooseDessert(mainPage.traifl);
+
+  await expect(traiflPage.name).toBeVisible();
+
+  await traiflPage.selectRandomOption(
+    traiflPage.tasteCheckbox
+  );
+
+  await orderMaker(
+    traiflPage,
+    orderPage,
+    priceControl,
+    orderMock
+  );
+});
+
+
+test('macaron order e2e', async ({page,orderMock,mainPage,orderPage,priceControl}) => {
+  const macaronPage = new BombMakaronPage(page);
 
   await mainPage.chooseDessert(mainPage.macaron);
-  await bombMacaronPage.selectRandomOption(bombMacaronPage.tasteCheckbox);
-  await bombMacaronPage.quantity.changeQuantity(4);
 
-  //проверка что количество изменилось добавить
+  await expect(macaronPage.name).toBeVisible();
+
+  await macaronPage.selectRandomOption(
+    macaronPage.tasteCheckbox
+  );
+
+  await orderMaker(macaronPage, orderPage,priceControl,orderMock);
+});
+
+
+test('musse cake order e2e', async ({page,orderMock,mainPage,orderPage,priceControl}) => {
+  const mussePage = new MussePage(page);
+
+  await mainPage.chooseDessert(mainPage.muss);
+
+  await expect(mussePage.name).toBeVisible();
+
+  await mussePage.colorSlctr.click();
+
+  await mussePage.selectRandomOption(mussePage.colorOption);
+
+  await mussePage.weightSlctr.click();
+
+  await mussePage.selectRandomOption(mussePage.weightOption);
+
+  await mussePage.selectRandomOption(mussePage.tasteCheckbox);
+
+  await orderMaker(mussePage,orderPage,priceControl,orderMock);
+});
+
+
+test('wedding cake order e2e', async ({page,orderMock,mainPage,orderPage,priceControl}) => {
+  const weddingPage = new WedCakePage(page);
+
+  await mainPage.chooseDessert(mainPage.weddingCake);
+
+  await expect(weddingPage.name).toBeVisible();
+
+  await weddingPage.weightSlctr.click();
+
+  await weddingPage.selectRandomOption( weddingPage.weightOption);
+
+  await weddingPage.selectRandomOption(weddingPage.tasteCheckbox);
+
+  await orderMaker(weddingPage,orderPage,priceControl,orderMock);
+});
+
+
+test('bomb cake order e2e', async ({page,orderMock,mainPage,orderPage,priceControl}) => {
+  const bombCakePage = new BombMakaronPage(page);
+
+  await mainPage.chooseDessert(mainPage.bombCake);
+
+  await expect(bombCakePage.name).toBeVisible();
+
+  await orderMaker(bombCakePage,orderPage,priceControl,orderMock );
+});
+
+
+
+test('quantity control macaron test', async ({page, mainPage,priceControl}) => {
+  const bombMacaronPage = new BombMakaronPage(page);
+  const cartControl = new CartControl(page);
+
+  await mainPage.chooseDessert(mainPage.macaron);
+
+  await bombMacaronPage.selectRandomOption(bombMacaronPage.tasteCheckbox);
+
+  const quantity = await bombMacaronPage.quantity.changeQuantity(4);
+
+  await bombMacaronPage.quantity.checkQuantity(quantity);
+
+  const selectedDessert = await bombMacaronPage.captureDessert(quantity);
 
   await bombMacaronPage.addToChart();
 
   await mainPage.openPack();
+
   await mainPage.submitOrder();
 
-  // метод для сверки цены
+  await cartControl.debugCart();
 
-})
+  const cartItems = await cartControl.getCartItems();
+
+  expect(cartItems.length).toBeGreaterThan(0);
+
+  await cartControl.checkCartItem(selectedDessert);
+  await priceControl.checkTotalPrice([selectedDessert]);
+});
+
+
+test('add macaron to favorites', async ({page,mainPage}) => {
+  const macaronPage = new BombMakaronPage(page);
+  const favoritesPage = new FavoritesPage(page);
+
+  await mainPage.chooseDessert(mainPage.macaron);
+  const dessertName = (await macaronPage.name.innerText()).trim();
+
+  console.log('Выбранный десерт:', dessertName);
+
+  await macaronPage.addToFavorites();
+
+  await page.goto('');
+
+  await mainPage.openWishList();
+
+  const favoriteNames =await favoritesPage.getFavoriteNames();
+
+  console.log('Избранное:', favoriteNames);
+
+  await favoritesPage.checkFavorite(dessertName);
+});

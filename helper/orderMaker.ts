@@ -1,8 +1,8 @@
-import { OrderPage } from '../orderPage';
-import { BaseDessert } from './baseDessert';
-import { PriceControl } from './PriceControl';
+import { OrderPage } from '../pageObject/orderPage';
+import { BaseDessert } from '../pageObject/baseDessert';
+import { PriceControl } from './priceControl';
 import { expect } from '@playwright/test';
-import { OrderMock } from '../../fixtures'; 
+import {OrderMock} from './fixtures';
 
 export async function orderMaker(
     dessertPage: BaseDessert,

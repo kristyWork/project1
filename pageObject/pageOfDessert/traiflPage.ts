@@ -1,5 +1,5 @@
 import { Page, Locator } from '@playwright/test';
-import { BaseDessert } from '../helper/baseDessert';
+import { BaseDessert } from '../baseDessert';
 
 export class TraiflPage extends BaseDessert{
 
