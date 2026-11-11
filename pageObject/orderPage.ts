@@ -11,10 +11,10 @@ export class OrderPage{
      submit:Locator;
 
      constructor(page:Page){
-        this.fullName=page.locator('input[name="Name"]');
-        this.email=page.locator('input[name="Email"]');
-        this.phone=page.locator('input[name="Phone"]');
-        this.wishes=page.locator('textarea[name="Textarea"]');
+        this.fullName = page.getByPlaceholder('Ваше ФИО');
+        this.email=page.getByPlaceholder('Ваш email');
+        this.phone = page.locator('#input_0701244879702');
+        this.wishes=page.locator('textarea[name="Textarea"]:visible').first();
         this.remember = page.locator('label').filter({ hasText: 'Запомнить контакты в браузере' }).locator('input');
         this.deliveryOptions = page.locator( 'input[name="Выберите вариант доставки"]');
         this.submit=page.getByRole('button', { name: 'Оформить' });

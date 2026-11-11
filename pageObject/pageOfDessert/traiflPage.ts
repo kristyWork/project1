@@ -8,7 +8,7 @@ export class TraiflPage extends BaseDessert{
     constructor(page:Page){
 
         super(page);   
-        this.tasteCheckbox = page.locator('input.t-checkbox[type="checkbox"]');
+        this.tasteCheckbox = page.locator('.t-product__checkbox-wrap input.t-checkbox[type="checkbox"]');
        
     }
 

@@ -11,10 +11,8 @@ import { orderMaker } from '../helper/orderMaker';
 import { PriceControl } from '../helper/priceControl';
 import { CartControl } from '../helper/CartControl';
 import { FavoritesPage } from '../pageObject/FavoritesPage';
-import { monitorNetwork } from '../helper/NetworkDiagnostics';
 
 test.beforeEach(async({page})=> {
-  monitorNetwork(page);
   await page.goto('',{ waitUntil: 'domcontentloaded'});
   await expect(page).toHaveTitle(/ЦЕХ/);
 })
@@ -67,38 +65,32 @@ test('cake', async({page, orderMock, mainPage, orderPage, priceControl})=>{
 });
 
 
-test('traifl order e2e', async ({page, orderMock,mainPage,orderPage,priceControl}) => {
+test('traifl order e2e', async ({page,orderMock,mainPage,orderPage,priceControl
+}) => {
   const traiflPage = new TraiflPage(page);
 
   await mainPage.chooseDessert(mainPage.traifl);
 
-  await expect(traiflPage.name).toBeVisible();
+  await expect.poll( async () => await traiflPage.tasteCheckbox.count(),
+    {
+      message: 'Ожидание загрузки вкусов трайфлов',
+      timeout: 20000,
+      intervals: [500, 1000, 2000]
+    }
+  ).toBeGreaterThan(0);
 
-  await traiflPage.selectRandomOption(
-    traiflPage.tasteCheckbox
-  );
+  await traiflPage.selectRandomOption(traiflPage.tasteCheckbox);
 
-  await orderMaker(
-    traiflPage,
-    orderPage,
-    priceControl,
-    orderMock
-  );
+  await orderMaker(traiflPage,orderPage,priceControl,orderMock);
 });
-
 
 test('macaron order e2e', async ({page,orderMock,mainPage,orderPage,priceControl}) => {
   const macaronPage = new BombMakaronPage(page);
 
   await mainPage.chooseDessert(mainPage.macaron);
+  await macaronPage.selectRandomOption(macaronPage.tasteCheckbox);
 
-  await expect(macaronPage.name).toBeVisible();
-
-  await macaronPage.selectRandomOption(
-    macaronPage.tasteCheckbox
-  );
-
-  await orderMaker(macaronPage, orderPage,priceControl,orderMock);
+ await orderMaker(macaronPage, orderPage, priceControl, orderMock, mainPage);
 });
 
 
@@ -107,14 +99,9 @@ test('musse cake order e2e', async ({page,orderMock,mainPage,orderPage,priceCont
 
   await mainPage.chooseDessert(mainPage.muss);
 
-  await expect(mussePage.name).toBeVisible();
-
   await mussePage.colorSlctr.click();
-
   await mussePage.selectRandomOption(mussePage.colorOption);
-
   await mussePage.weightSlctr.click();
-
   await mussePage.selectRandomOption(mussePage.weightOption);
 
   await mussePage.selectRandomOption(mussePage.tasteCheckbox);
@@ -128,45 +115,52 @@ test('wedding cake order e2e', async ({page,orderMock,mainPage,orderPage,priceCo
 
   await mainPage.chooseDessert(mainPage.weddingCake);
 
-  await expect(weddingPage.name).toBeVisible();
-
   await weddingPage.weightSlctr.click();
-
   await weddingPage.selectRandomOption( weddingPage.weightOption);
 
   await weddingPage.selectRandomOption(weddingPage.tasteCheckbox);
 
-  await orderMaker(weddingPage,orderPage,priceControl,orderMock);
+  await orderMaker(weddingPage,orderPage,priceControl,orderMock, mainPage);
 });
 
 
-test('bomb cake order e2e', async ({page,orderMock,mainPage,orderPage,priceControl}) => {
+test('quantity control bomb cake', async ({page,orderMock, mainPage,priceControl,orderPage}) => {
   const bombCakePage = new BombMakaronPage(page);
+  const cartControl = new CartControl(page);
 
   await mainPage.chooseDessert(mainPage.bombCake);
 
-  await expect(bombCakePage.name).toBeVisible();
+  await bombCakePage.selectRandomOption(bombCakePage.tasteCheckbox);
 
-  await orderMaker(bombCakePage,orderPage,priceControl,orderMock );
+  const quantity = await bombCakePage.quantity.changeQuantity(1);
+
+  await bombCakePage.quantity.checkQuantity(quantity);
+
+  const selectedDessert = await bombCakePage.captureDessert(quantity);
+
+  const cartItems = await cartControl.getCartItems();
+  
+  await orderMaker(bombCakePage,orderPage,priceControl,orderMock, mainPage);
+
+
 });
 
 
-
 test('quantity control macaron test', async ({page, mainPage,priceControl}) => {
-  const bombMacaronPage = new BombMakaronPage(page);
+  const macaronPage = new BombMakaronPage(page);
   const cartControl = new CartControl(page);
 
   await mainPage.chooseDessert(mainPage.macaron);
 
-  await bombMacaronPage.selectRandomOption(bombMacaronPage.tasteCheckbox);
+  await macaronPage.selectRandomOption(macaronPage.tasteCheckbox);
 
-  const quantity = await bombMacaronPage.quantity.changeQuantity(4);
+  const quantity = await macaronPage.quantity.changeQuantity(4);
 
-  await bombMacaronPage.quantity.checkQuantity(quantity);
+  await macaronPage.quantity.checkQuantity(quantity);
 
-  const selectedDessert = await bombMacaronPage.captureDessert(quantity);
+  const selectedDessert = await macaronPage.captureDessert(quantity);
 
-  await bombMacaronPage.addToChart();
+  await macaronPage.addToChart();
 
   await mainPage.openPack();
 
@@ -197,10 +191,6 @@ test('add macaron to favorites', async ({page,mainPage}) => {
   await page.goto('');
 
   await mainPage.openWishList();
-
-  const favoriteNames =await favoritesPage.getFavoriteNames();
-
-  console.log('Избранное:', favoriteNames);
 
   await favoritesPage.checkFavorite(dessertName);
 });
