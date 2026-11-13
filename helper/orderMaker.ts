@@ -1,11 +1,11 @@
-import { OrderPage } from '../pageObject/orderPage';
-import { BaseDessert } from '../pageObject/baseDessert';
-import { BombMakaronPage } from '../pageObject/pageOfDessert/bombMacaronPage';
-import { MainPage } from '../pageObject/mainPage';
+import { OrderPage } from '../pages/orderPage';
+import { BaseDessert } from '../pages/baseDessert';
+import { MainPage } from '../pages/mainPage';
 import { PriceControl } from './priceControl';
 import { expect } from '@playwright/test';
-import { OrderMock } from './fixtures';
-import { WedCakePage } from '../pageObject/pageOfDessert/wedCakePage';
+import { OrderMock } from '../fixtures/index';
+import { WedCake } from '../pages/dessert/cakes';
+import { BombMakaron } from '../pages/dessert/desserts';
 
 export async function orderMaker(
   dessertPage: BaseDessert,
@@ -17,7 +17,7 @@ export async function orderMaker(
 
   await dessertPage.addToChart();
 
-  if (dessertPage instanceof BombMakaronPage || dessertPage instanceof WedCakePage ) {
+  if (dessertPage instanceof BombMakaron || dessertPage instanceof WedCake ) {
     if (!mainPage) {
     throw new Error('Для BombMakaronPage необходим mainPage');
   };

@@ -1,6 +1,6 @@
 
 import { Page, Locator } from '@playwright/test';
-import type { DessertItem } from '../helper/dessertItem';
+import type { DessertItem } from '../pages/components/dessertItem';
 import { parsePrice } from '../helper/priceControl';
 
 export class BaseDessert {
@@ -48,32 +48,15 @@ async selectRandomOption(slctr: Locator): Promise<void> {
         }))
         .filter(option => !option.disabled && option.value !== '')
     );
-
-    if (options.length === 0) {
-      throw new Error('Нет доступных вариантов');
-    }
-
-    const random = options[
-      Math.floor(Math.random() * options.length)
-    ];
-
+    if (options.length === 0) {throw new Error('Нет доступных вариантов');}
+    const random = options[Math.floor(Math.random() * options.length)];
     await first.selectOption({ index: random.index });
 
   } else {
-    const visibleLabels = slctr.locator('..').filter({
-      visible: true
-    });
-
+    const visibleLabels = slctr.locator('..').filter({ visible: true});
     const visibleCount = await visibleLabels.count();
-
-    if (visibleCount === 0) {
-      throw new Error('Нет видимых вариантов для выбора');
-    }
-
-    const randomIndex = Math.floor(
-      Math.random() * visibleCount
-    );
-
+    if (visibleCount === 0) {throw new Error('Нет видимых вариантов для выбора');}
+    const randomIndex = Math.floor(Math.random() * visibleCount);
     await visibleLabels.nth(randomIndex).click();
   }
 }
@@ -86,20 +69,13 @@ async getSelectedOptions(slctr: Locator): Promise<string[]> {
   for (let i = 0; i < count; i++) {
     const element = slctr.nth(i);
 
-    const tagName = await element.evaluate(
-      el => el.tagName.toLowerCase()
-    );
+    const tagName = await element.evaluate(el => el.tagName.toLowerCase());
 
     if (tagName === 'select') {
       const selectedOption = element.locator('option:checked');
 
-      const text = (
-        await selectedOption.textContent() ?? ''
-      ).trim();
-
-      if (text) {
-        selected.push(text);
-      }
+      const text = (await selectedOption.textContent() ?? '').trim();
+      if (text) {selected.push(text);}
 
     } else if (tagName === 'input') {
       if (await element.isChecked()) {

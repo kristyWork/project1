@@ -1,6 +1,6 @@
 
 import { Page, Locator, expect } from '@playwright/test';
-import type { DessertItem } from './dessertItem';
+import type {DessertItem} from '../pages/components/dessertItem';
 
 export function parsePrice(text: string): number {
   const compact = text

@@ -1,5 +1,5 @@
 import { expect } from '@playwright/test';
-import type { DessertItem } from './dessertItem';
+import type { DessertItem } from '../pages/components/dessertItem';
 import { Page, Locator } from '@playwright/test';
 
 export type CartItem = {

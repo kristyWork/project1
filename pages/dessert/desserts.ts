@@ -1,7 +1,35 @@
 import { Page, Locator } from '@playwright/test';
 import { BaseDessert } from '../baseDessert';
+import { QuantityControl } from '../../helper/quantityControl';
 
-export class MussePage extends BaseDessert{
+export class BombMakaron extends BaseDessert {
+  tasteCheckbox: Locator;
+  quantity: QuantityControl;
+
+  constructor(page: Page) {
+    super(page);
+
+    const product = page.locator('.t-store__prod-popup__container:visible');
+    this.tasteCheckbox = product.locator('input.t-checkbox[type="checkbox"]');
+    this.quantity = new QuantityControl(page);
+  }
+}
+
+export class Traifl extends BaseDessert{
+
+    tasteCheckbox:Locator;
+   
+    constructor(page:Page){
+
+        super(page);   
+        this.tasteCheckbox = page.locator('.t-product__checkbox-wrap input.t-checkbox[type="checkbox"]');
+       
+    }
+
+
+}
+
+export class Musse extends BaseDessert{
 
     colorSlctr:Locator;
     colorOption: Locator;

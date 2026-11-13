@@ -8,24 +8,15 @@ export class FavoritesPage {
 
   constructor(page: Page) {
     this.page = page;
-
-    this.favoritesWindow = page.locator(
-      '.t1002__wishlistwin:visible'
-    );
-
-    this.favoriteItems = this.favoritesWindow.locator(
-      '.t1002__product'
-    );
+    this.favoritesWindow = page.locator('.t1002__wishlistwin:visible');
+    this.favoriteItems = this.favoritesWindow.locator('.t1002__product');
   }
 
   async getFavoriteNames(): Promise<string[]> {
     await expect(this.favoritesWindow).toBeVisible();
 
-    return this.favoriteItems.locator(
-      '.t1002__product-title'
-    ).allTextContents().then(names =>
-      names.map(name => name.trim())
-    );
+    return this.favoriteItems.locator('.t1002__product-title')
+    .allTextContents().then(names =>names.map(name => name.trim()));
   }
 
   async checkFavorite(expectedName: string): Promise<void> {

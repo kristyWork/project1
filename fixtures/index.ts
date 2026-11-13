@@ -1,7 +1,7 @@
 import { test as base, expect } from '@playwright/test';
-import { MainPage } from '../pageObject/mainPage';
-import { OrderPage } from '../pageObject/orderPage';
-import { PriceControl } from './priceControl';
+import { MainPage } from '../pages/mainPage';
+import { OrderPage } from '../pages/orderPage';
+import { PriceControl } from '../helper/priceControl';
 export type OrderMock = {wasIntercepted: () => boolean;};
 type Fixtures = {
     orderMock: OrderMock;
